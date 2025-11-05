@@ -1,1 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Teacher Classroom</title>
+<style>
+:root {
+  --accent: #2d7ff9;
+  --muted: #666;
+  --bg: #f8fafc;
+  --card: #fff;
+}
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0; background: var(--bg); color: #111;
+  display: flex; height: 100vh;
+}
+.sidebar {
+  width: 320px; background: #fff; padding: 16px;
+  border-right: 1px solid #eee; overflow-y: auto;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+.logo { font-size: 20px; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
+label { font-size: 13px; color: var(--muted); margin-top: 12px; display:block;}
+select { width:100%; padding:8px; border-radius:8px; border:1px solid #ddd; }
+button { background: var(--accent); color:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; }
+button.ghost { background:#fff; color:var(--accent); border:1px solid #cde; }
+.main {
+  flex: 1; display: flex; flex-direction: column; padding: 20px;
+}
+.lesson-title { font-size: 22px; font-weight: 600; color:#222; }
+.lesson-meta { font-size:13px; color: var(--muted); margin-bottom:12px; }
+.image-wrap img { max-width: 100%; max-height: 60vh; display:block; margin:auto; border:1px solid #ddd; border-radius:8px; background:#fff; }
+.text { white-space: pre-wrap; line-height:1.6; margin-top:12px; font-size:15px; }
+audio { width:100%; margin-top:10px; }
+.controls { display:flex; gap:8px; margin-top:12px; }
+footer { margin-top:auto; text-align:center; font-size:13px; color: var(--muted); padding:12px 0; }
+@media (max-width:900px){body{flex-direction:column;} .sidebar{width:100%;height:auto;border-right:0;border-bottom:1px solid #eee;}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">AI Teacher Classroom</div>
+
+  <label>Class</label>
+  <select id="classSelect"></select>
+
+  <label>Subject</label>
+  <select id="subjectSelect"></select>
+
+  <label>Lesson</label>
+  <select id="lessonSelect"></select>
+
+  <div class="controls">
+    <button id="prevBtn" class="ghost">Prev</button>
+    <button id="nextBtn" class="ghost">Next</button>
+  </div>
+
+  <footer>© AI Teacher Classroom</footer>
+</div>
+
+<div class="main">
+  <div class="lesson-title" id="lessonTitle">Select a Lesson</div>
+  <div class="lesson-meta" id="lessonMeta"></div>
+
+  <div class="image-wrap"><img id="lessonImage" src="" alt="Lesson Image"></div>
+  <audio id="lessonAudio" controls></audio>
+  <div class="text" id="lessonText"></div>
+</div>
+
+<script>
+let data = {};
+let cls = null, subj = null, idx = 0;
+const cSel = document.getElementById("classSelect");
+const sSel = document.getElementById("subjectSelect");
+const lSel = document.getElementById("lessonSelect");
+
+async function loadData(){
+  const res = await fetch("data.json");
+  data = await res.json();
+  populateClasses();
+}
+
+function populateClasses(){
+  cSel.innerHTML = "<option value=''>-- Select Class --</option>";
+  for (let c of Object.keys(data)){
+    const opt = document.createElement("option");
+    opt.value=c; opt.textContent=c; cSel.appendChild(opt);
+  }
+}
+
+cSel.onchange = ()=>{
+  cls = cSel.value; subj=null; idx=0;
+  sSel.innerHTML="<option value=''>-- Select Subject --</option>";
+  if(!cls) return;
+  for(let s of Object.keys(data[cls])){
+    const o=document.createElement("option");
+    o.value=s; o.textContent=s; sSel.appendChild(o);
+  }
+}
+
+sSel.onchange = ()=>{
+  subj = sSel.value; idx=0;
+  lSel.innerHTML="<option value=''>-- Select Lesson --</option>";
+  if(!subj) return;
+  const lessons = data[cls][subj];
+  lessons.forEach((l,i)=>{
+    const o=document.createElement("option");
+    o.value=i; o.textContent=l.title; lSel.appendChild(o);
+  });
+}
+
+lSel.onchange = ()=>{
+  idx=parseInt(lSel.value);
+  loadLesson();
+}
+
+function loadLesson(){
+  if(!cls||!subj) return;
+  const lesson=data[cls][subj][idx];
+  if(!lesson) return;
+  document.getElementById("lessonTitle").textContent=lesson.title;
+  document.getElementById("lessonMeta").textContent=`${cls} • ${subj} • Part ${idx+1}`;
+  document.getElementById("lessonImage").src=lesson.image;
+  document.getElementById("lessonAudio").src=lesson.audio;
+  document.getElementById("lessonText").textContent=lesson.text;
+  lSel.value=idx;
+}
+
+document.getElementById("prevBtn").onclick=()=>{if(idx>0){idx--;loadLesson();}};
+document.getElementById("nextBtn").onclick=()=>{if(idx < data[cls][subj].length-1){idx++;loadLesson();}};
+
+loadData();
+</script>
+</body>
+</html>
 
