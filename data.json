@@ -16,8 +16,8 @@
       },
       {
         "title": "Lesson 10 - Part 2",
-        "image": "/content/ai_teacher/class10/science/lesson10/handdrawn_diagrams/class10_science_lesson10_explainer2.png",
-        "audio": "/content/ai_teacher/class10/science/lesson10/teacher_audio/class10_science_lesson10_explainer2.mp3",
+        "image": "class10/science/lesson10/handdrawn_diagrams/class10_science_lesson10_explainer2.png",
+        "audio": "class10/science/lesson10/teacher_audio/class10_science_lesson10_explainer2.mp3",
         "text": "The eye lens is composed of a fibrous, jelly-like material. Its curvature can be modified to some extent by the ciliary muscles. When the muscles are relaxed, the lens becomes thin. Thus, its focal length increases. This enables us to see distant objects clearly. To see an object comfortably and distinctly, you must hold it at about 25 cm from the eyes. The farthest point upto which the eye can see objects clearly is called the far point of the eye. It is infinity for a nor mal eye.",
         "keywords": [
           "composed",
